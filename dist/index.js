@@ -14,15 +14,22 @@ async function setup() {
 
 	// Download the specific version of the tool, e.g. as a tarball
 	const download = getDownloadURL(version);
-	const pathToTarball = await tc.downloadTool(download);
 
-	const extract = download.endsWith(".zip") ? tc.extractZip : tc.extractTar;
-	const pathToCLI = await extract(pathToTarball);
+	try {
+		const pathToTarball = await tc.downloadTool(download);
 
-	console.log(`Extracted to ${pathToCLI}`);
+		const extract = download.endsWith(".zip") ? tc.extractZip : tc.extractTar;
+		const pathToCLI = await extract(pathToTarball);
 
-	// Expose the tool by adding it to the PATH
-	core.addPath(pathToCLI);
+		console.log(`Extracted to ${pathToCLI}`);
+
+		// Expose the tool by adding it to the PATH
+		core.addPath(pathToCLI);
+	} catch (error) {
+		core.setFailed(
+			`Binary is not available for the specified version: ${version} on ${os.arch()}_${os.platform()} (${error})`
+		);
+	}
 }
 
 function mapArch(arch) {
