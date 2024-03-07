@@ -1,3 +1,4 @@
+const os = require("os");
 const core = require("@actions/core");
 const tc = require("@actions/tool-cache");
 
@@ -15,9 +16,6 @@ async function setup() {
 	// Expose the tool by adding it to the PATH
 	core.addPath(pathToCLI);
 }
-
-const os = require("os");
-const path = require("path");
 
 function mapArch(arch) {
 	const mappings = {
