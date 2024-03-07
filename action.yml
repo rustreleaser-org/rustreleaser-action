@@ -1,0 +1,10 @@
+name: setup-rustreleaser
+description: Setup rustreleaser
+inputs:
+    version:
+        description: Version to install
+        required: false
+        default: 0.1.8
+runs:
+    using: node20
+    main: dist/index.js

@@ -1,0 +1,45 @@
+name: Tests
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+
+defaults:
+    run:
+        shell: bash
+
+jobs:
+    test:
+        name: Test
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                os: [macos-latest, windows-latest, ubuntu-latest]
+                version: [0.1.8]
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Setup rustreleaser
+              uses: ./
+              with:
+                  version: ${{ matrix.version }}
+
+            - name: Capture rustreleaser version installed
+              run: |
+                  export RR_VERSION=$( rr --version )
+                  echo 'RR_VERSION_INSTALLED<<EOF' >> $GITHUB_ENV
+                  rr --version >> $GITHUB_ENV
+                  echo 'EOF' >> $GITHUB_ENV
+
+            - name: Verify
+              shell: python
+              env:
+                  RR_VERSION_EXPECTED: ${{ matrix.version }}
+              run: |
+                  import sys, os
+                  sys.exit(
+                      int(not os.environ["RR_VERSION_EXPECTED"] in os.environ["RR_VERSION_INSTALLED"])
+                  )
