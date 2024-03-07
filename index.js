@@ -13,6 +13,8 @@ async function setup() {
 	const extract = download.url.endsWith(".zip") ? tc.extractZip : tc.extractTar;
 	const pathToCLI = await extract(pathToTarball);
 
+	console.log(`Extracted to ${pathToCLI}`);
+
 	// Expose the tool by adding it to the PATH
 	core.addPath(pathToCLI);
 }
