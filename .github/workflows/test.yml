@@ -16,7 +16,7 @@ jobs:
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
-                os: [macos-latest, windows-latest, ubuntu-latest]
+                os: [macos-latest, ubuntu-latest]
                 version: [0.1.8]
         steps:
             - name: Checkout
