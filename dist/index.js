@@ -4,6 +4,7 @@
 /***/ 7752:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
+const os = __nccwpck_require__(2037);
 const core = __nccwpck_require__(3877);
 const tc = __nccwpck_require__(2589);
 
@@ -12,18 +13,17 @@ async function setup() {
 	const version = core.getInput("version");
 
 	// Download the specific version of the tool, e.g. as a tarball
-	const download = getDownloadObject(version);
-	const pathToTarball = await tc.downloadTool(download.url);
+	const download = getDownloadURL(version);
+	const pathToTarball = await tc.downloadTool(download);
 
 	const extract = download.url.endsWith(".zip") ? tc.extractZip : tc.extractTar;
 	const pathToCLI = await extract(pathToTarball);
 
-	// Expose the tool by adding it to the PATH
-	core.addPath(path.join(pathToCLI, download.binPath));
-}
+	console.log(`Extracted to ${pathToCLI}`);
 
-const os = __nccwpck_require__(2037);
-const path = __nccwpck_require__(1017);
+	// Expose the tool by adding it to the PATH
+	core.addPath(pathToCLI);
+}
 
 function mapArch(arch) {
 	const mappings = {
@@ -42,16 +42,11 @@ function mapOS(os) {
 	return mappings[os] || os;
 }
 
-function getDownloadObject(version) {
+function getDownloadURL(version) {
 	const platform = os.platform();
 	const extension = platform === "win32" ? "zip" : "tar.gz";
 	const filename = `rr_${version}_${mapArch(os.arch())}_${mapOS(platform)}`;
-	const binPath = platform === "win32" ? "bin" : path.join(filename, "bin");
-	const url = `https://github.com/cestef/rustreleaser/releases/download/${version}/${filename}.${extension}`;
-	return {
-		url,
-		binPath,
-	};
+	return `https://github.com/cestef/rustreleaser/releases/download/${version}/${filename}.${extension}`;
 }
 
 module.exports = setup;
