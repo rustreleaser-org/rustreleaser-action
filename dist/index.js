@@ -16,7 +16,7 @@ async function setup() {
 	const download = getDownloadURL(version);
 	const pathToTarball = await tc.downloadTool(download);
 
-	const extract = download.url.endsWith(".zip") ? tc.extractZip : tc.extractTar;
+	const extract = download.endsWith(".zip") ? tc.extractZip : tc.extractTar;
 	const pathToCLI = await extract(pathToTarball);
 
 	console.log(`Extracted to ${pathToCLI}`);
